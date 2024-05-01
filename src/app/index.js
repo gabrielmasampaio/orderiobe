@@ -19,8 +19,16 @@ app.use(rateLimit({
 //Set routes
 app.use(routes)
 
-//Connect to Database
-mongoose.connect(dbConfig.uri);
+try {
+  // Connect to Database
+  await mongoose.connect(dbConfig.uri);
+  console.log("MongoDB connected successfully");
+} catch (error) {
+  console.error("Error connecting to MongoDB:", error);
+  // You may choose to handle the error in different ways, such as logging, retrying, or gracefully failing the application.
+  // For now, let's rethrow the error to propagate it further.
+  throw error;
+}
 
 
 module.exports = app
