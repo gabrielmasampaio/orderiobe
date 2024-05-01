@@ -19,16 +19,27 @@ app.use(rateLimit({
 //Set routes
 app.use(routes)
 
-try {
-  // Connect to Database
-  await mongoose.connect(dbConfig.uri);
-  console.log("MongoDB connected successfully");
-} catch (error) {
-  console.error("Error connecting to MongoDB:", error);
-  // You may choose to handle the error in different ways, such as logging, retrying, or gracefully failing the application.
-  // For now, let's rethrow the error to propagate it further.
-  throw error;
+async function connectToDatabase() {
+  try {
+    await mongoose.connect(dbConfig.uri);
+    console.log("MongoDB connected successfully");
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
+    throw error;
+  }
 }
+
+connectToDatabase()
+    .then(() => {
+      // Start the server after the database connection is established
+      app.listen(3000, () => {
+        console.log("Server is running on port 3000");
+      });
+    })
+    .catch((error) => {
+      console.error("Error starting server:", error);
+      process.exit(1);
+    });
 
 
 module.exports = app
